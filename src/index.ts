@@ -1,18 +1,13 @@
-require('dotenv').config();
-const { Client, GatewayIntentBits } = require('discord.js');
+import { Client, GatewayIntentBits } from 'discord.js';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessages],
 });
 
 client.once('ready', () => {
-  console.log(`Bot is online as ${client.user.tag}`);
-});
-
-client.on('messageCreate', message => {
-  if (message.content === '!ping') {
-    message.reply('Pong!');
-  }
+  console.log(`Logged in as ${client.user?.tag}`);
 });
 
 client.login(process.env.DISCORD_TOKEN);
