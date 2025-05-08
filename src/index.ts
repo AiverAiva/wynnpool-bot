@@ -1,6 +1,6 @@
-import { Client, GatewayIntentBits, Interaction, Partials } from 'discord.js';
+import { Client, Events, GatewayIntentBits, Interaction, Partials } from 'discord.js';
 import { DISCORD_TOKEN } from './config';
-import { registerCommands } from './handlers/commandHandler';
+import { getCommandHandler } from './commands/index';
 
 const client = new Client({
   intents: [
@@ -13,19 +13,23 @@ client.once('ready', () => {
   console.log(`Bot is online as ${client.user?.tag}`);
 });
 
-client.on('interactionCreate', async (interaction: Interaction) => {
+client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
+  const { commandName } = interaction;
+  const subcommand = interaction.options.getSubcommand(false) ?? undefined;
+  const handler = getCommandHandler(commandName, subcommand);
+
+  if (!handler) return interaction.reply({ content: 'Command not found.', ephemeral: true });
+
   try {
-    const command = await import(`./commands/${interaction.commandName}.ts`);
-    await command.execute(interaction);
-  } catch (error) {
-    console.error(error);
+    await handler(interaction);
+  } catch (err) {
+    console.error(err);
     await interaction.reply({ content: 'Error executing command.', ephemeral: true });
   }
 });
 
 (async () => {
-  await registerCommands();
   await client.login(DISCORD_TOKEN);
 })();
