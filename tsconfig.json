@@ -7,11 +7,17 @@
     "moduleResolution": "node",
     "outDir": "dist",
     "resolveJsonModule": true,
-    "types": ["node"],
-    "baseUrl": "./src",
+    "types": [
+      "node"
+    ],
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["*"]
+      "@/*": [
+        "src/*"
+      ]
     }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }
