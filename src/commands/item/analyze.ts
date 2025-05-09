@@ -3,7 +3,6 @@ import {
     ChatInputCommandInteraction,
     SlashCommandSubcommandBuilder,
 } from 'discord.js';
-import '@/utils/canvasSetup';
 
 export const data = new SlashCommandSubcommandBuilder()
     .setName('analyze')
