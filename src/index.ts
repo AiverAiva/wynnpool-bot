@@ -1,6 +1,7 @@
 import { Client, Events, GatewayIntentBits, Interaction, Partials } from 'discord.js';
-import { DISCORD_TOKEN } from './config';
-import { getCommandHandler } from './commands/index';
+import { DISCORD_TOKEN } from '@/config';
+import { getCommandHandler } from '@/handlers/commandHandler';
+import logger from '@/utils/logger';
 
 const client = new Client({
   intents: [
@@ -10,7 +11,7 @@ const client = new Client({
   partials: [Partials.Channel] // Required to receive DMs
 });
 client.once('ready', () => {
-  console.log(`Bot is online as ${client.user?.tag}`);
+  logger.info(`Logged in as ${client.user?.tag}`);
 });
 
 client.on(Events.InteractionCreate, async interaction => {
@@ -25,11 +26,13 @@ client.on(Events.InteractionCreate, async interaction => {
   try {
     await handler(interaction);
   } catch (err) {
-    console.error(err);
+    logger.error('Error executing command:', err);
     await interaction.reply({ content: 'Error executing command.', ephemeral: true });
   }
 });
 
 (async () => {
-  await client.login(DISCORD_TOKEN);
+  await client.login(DISCORD_TOKEN)
+    .then(() => logger.info('Bot login successful'))
+    .catch(err => logger.error('Login failed', err));
 })();

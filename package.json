@@ -24,7 +24,9 @@
     "discord.js": "^14.19.3",
     "dotenv": "^16.5.0",
     "fs": "^0.0.1-security",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+    "winston": "^3.17.0",
+    "winston-console-format": "^1.0.8"
   },
   "devDependencies": {
     "@types/node": "^22.15.17",
