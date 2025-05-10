@@ -1,5 +1,5 @@
+import logger from '@/utils/logger';
 import {
-    AttachmentBuilder,
     ChatInputCommandInteraction,
     SlashCommandSubcommandBuilder,
 } from 'discord.js';
@@ -35,7 +35,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         const json = await response.json();
         await interaction.editReply(`Decoded result:\n\`\`\`json\n${JSON.stringify(json, null, 2)}\n\`\`\``);
     } catch (error: any) {
-        console.error(error);
+        logger.error(error);
         await interaction.editReply(`❌ Error analyzing item: \`${error.message}\``);
     }
 }
