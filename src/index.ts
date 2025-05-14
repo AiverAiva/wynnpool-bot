@@ -2,6 +2,7 @@ import { Client, Events, GatewayIntentBits, Interaction, Partials } from 'discor
 import { DISCORD_TOKEN } from '@/config';
 import { getCommandHandler } from '@/handlers/commandHandler';
 import logger from '@/utils/logger';
+import { initEmojis } from './utils/emojiFactory';
 
 const client = new Client({
   intents: [
@@ -10,8 +11,10 @@ const client = new Client({
   ],
   partials: [Partials.Channel] // Required to receive DMs
 });
-client.once('ready', () => {
+client.once(Events.ClientReady, async () => {
   logger.info(`Logged in as ${client.user?.tag}`);
+  await initEmojis(client);
+  logger.info(`Emojis initialized`);
 });
 
 client.on(Events.InteractionCreate, async interaction => {
