@@ -1,6 +1,6 @@
 import { Client, Events, GatewayIntentBits, Interaction, Partials } from 'discord.js';
 import { DISCORD_TOKEN } from '@/config';
-import { getCommandHandler } from '@/handlers/commandHandler';
+import { getCommandHandler, getAutocompleteHandler } from '@/handlers/commandHandler';
 import logger from '@/utils/logger';
 
 const client = new Client({
@@ -15,6 +15,19 @@ client.once('ready', () => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
+  if (interaction.isAutocomplete()) {
+    const { commandName } = interaction;
+    const subcommand = interaction.options.getSubcommand(false) ?? undefined;
+    const autocompleteHandler = getAutocompleteHandler(commandName, subcommand);
+    if (autocompleteHandler) {
+      try {
+        await autocompleteHandler(interaction);
+      } catch (err) {
+        logger.error('Error in autocomplete handler:', err);
+      }
+    }
+    return;
+  }
   if (!interaction.isChatInputCommand()) return;
 
   const { commandName } = interaction;

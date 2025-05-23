@@ -5,6 +5,7 @@ import { CLIENT_ID, DISCORD_TOKEN } from '@/config';
 import logger from '@/utils/logger';
 
 const commandsMap = new Map<string, Function>();
+const autocompleteMap = new Map<string, Function>();
 const slashCommands: any[] = [];
 
 /**
@@ -48,6 +49,15 @@ function loadCommandsRecursively(dir: string, baseCmd?: string) {
       commandsMap.set(key, commandModule.execute);
       logger.silly(`🗂️  Registered handler key="${key}" for module ${file}`);
     }
+    // Autocomplete: map handlers for all commands & subcommands
+    if (typeof commandModule.autocomplete === 'function') {
+      const base = baseCmd ?? path.parse(file).name;
+      const key = isIndex
+        ? base
+        : `${baseCmd}.${path.parse(file).name}`;
+      autocompleteMap.set(key, commandModule.autocomplete);
+      logger.silly(`🔎 Registered autocomplete key="${key}" for module ${file}`);
+    }
   }
 }
 
@@ -56,6 +66,11 @@ loadCommandsRecursively(path.join(__dirname, '../commands'));
 export function getCommandHandler(commandName: string, subcommandName?: string) {
   const key = subcommandName ? `${commandName}.${subcommandName}` : commandName;
   return commandsMap.get(key);
+}
+
+export function getAutocompleteHandler(commandName: string, subcommandName?: string) {
+  const key = subcommandName ? `${commandName}.${subcommandName}` : commandName;
+  return autocompleteMap.get(key);
 }
 
 async function registerSlashCommands() {
