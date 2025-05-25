@@ -64,7 +64,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   }
   await interaction.deferReply();
   try {
-    const res = await fetch(`https://api.wynnpool.com/item/weight/${encodeURIComponent(itemName)}`);
+    const res = await fetch(`https://api.wynnpool.com/item/${encodeURIComponent(itemName)}/weight`);
     if (!res.ok) throw new Error('Failed to fetch weight data');
     const data = await res.json();
     if (!Array.isArray(data) || data.length === 0) {
