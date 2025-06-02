@@ -37,8 +37,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         // Format stats
         const stats = Object.entries(json.identifications || {})
             .map(([key, value]: [string, any]) => {
-                const stars = value.stars ? + ''+'\\*'.repeat(value.stars) : '';
-                return `${value.displayValue}${stars} ${key} [${Number(value.percentage).toFixed(2)}%]`;
+                const stars = value.stars ? '\\*'.repeat(value.stars) : '';
+                return `${value.displayValue > 0 ? "+" : ""}${value.displayValue}${stars} ${key} [${Number(value.percentage).toFixed(2)}%]`;
             })
             .join('\n');
         // Get main scale name and value
