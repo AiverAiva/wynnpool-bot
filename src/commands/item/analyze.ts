@@ -34,6 +34,10 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         }
 
         const json = await response.json();
+        // Format all weighted scores
+        const weightedScores = Object.entries(json.weightedScores || {})
+            .map(([name, value]) => `**${name} Weight:** ${Number(value).toFixed(2)}%`)
+            .join('\n');
         // Format stats
         const stats = Object.entries(json.identifications || {})
             .map(([key, value]: [string, any]) => {
@@ -41,9 +45,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
                 return `${value.displayValue > 0 ? "+" : ""}${value.displayValue}${stars} ${key} [${Number(value.percentage).toFixed(2)}%]`;
             })
             .join('\n');
-        // Get main scale name and value
-        const scaleName = Object.keys(json.weightedScores)[0] || 'Main';
-        const scaleWeight = json.weightedScores[scaleName] ? Number(json.weightedScores[scaleName]).toFixed(2) : 'N/A';
+        // Get overall and item name
         const overall = json.overall ? Number(json.overall).toFixed(2) : 'N/A';
         const itemName = json.itemName || 'Unknown';
         // Build embed
@@ -52,7 +54,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
             .setTitle('Item weight analysis')
             .setDescription(
                 `[Full Weights List](https://weight.wynnpool.com/)\n\n` +
-                `**__${scaleName} Weight: ${scaleWeight}%__**\n\n` +
+                `${weightedScores}\n\n` +
                 `${itemName} ${overall}%\n` +
                 stats
             )
